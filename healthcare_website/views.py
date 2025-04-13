@@ -508,36 +508,8 @@ def get_doctors(request):
 #                 return JsonResponse({'status': 'error', 'message': 'All fields are required'}, status=400)
 #             return redirect('home')
         
-#         # Get doctor
-#         try:
-#             doctor = Doctor.objects.get(id=doctor_id)
-#         except Doctor.DoesNotExist:
-#             if is_ajax:
-#                 return JsonResponse({'status': 'error', 'message': 'Doctor not found'}, status=404)
-#             return redirect('home')
+
         
-#         # Format date and time
-#         try:
-#             date_obj = datetime.strptime(appointment_date, '%Y-%m-%d').date()
-#             time_obj = datetime.strptime(appointment_time, '%H:%M').time()
-#         except ValueError:
-#             if is_ajax:
-#                 return JsonResponse({'status': 'error', 'message': 'Invalid date or time format'}, status=400)
-#             return redirect('home')
-        
-#         # Check if appointment is available
-#         if Appointment.objects.filter(
-#             doctor=doctor,
-#             appointment_date=date_obj,
-#             appointment_time=time_obj,
-#             status__in=['pending', 'confirmed']
-#         ).exists():
-#             if is_ajax:
-#                 return JsonResponse({
-#                     'status': 'error', 
-#                     'message': 'This time slot is already booked. Please select another time.'
-#                 }, status=409)
-#             return redirect('home')
         
 #         # Create appointment
 #         appointment = Appointment.objects.create(
