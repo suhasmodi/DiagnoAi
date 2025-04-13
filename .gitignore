@@ -1,5 +1,4 @@
 # Ignore settings and env files
-settings.py
 .env
 
 # Byte-compiled / cache
