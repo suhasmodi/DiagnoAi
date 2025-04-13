@@ -1,5 +1,5 @@
 # Ignore settings and env files
-.env
+
 
 # Byte-compiled / cache
 __pycache__/
