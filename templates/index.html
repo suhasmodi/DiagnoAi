@@ -1,0 +1,871 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Healthcare Landing Page{% endblock %}</title>
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Baloo+2:400,500,600,700,800%7CLato:100,300,400,700,900%7COpen+Sans:300,400,600,700,800%7CRobik:300,400,500,700,900&amp;display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- <link rel="shortcut icon" href="favicon.ico"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- In your <head> or just before closing </body> -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <header>
+        <div class="logo">🏥</div>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="#">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Tools</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'show_chat' %}">AI chat</a></li>
+                        <li><a href="#upload-container">Report Analysis &amp; Insight</a></li>
+                        <li><a href="{% url 'disease_prediction' %}">Know your Diseases</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'news' %}">Health Articles</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#" onclick="openModal()">Contact Us</a></li>
+            </ul>
+        </nav>
+        <div class="header-right">
+
+            <div class="emergency">
+                <img src="{% static 'images_website/SVG-2.svg' %}" alt="" srcset="">
+                Emergency:
+                1234567890
+            </div>
+
+            <!-- Book Appointment Button -->
+            <button id="booking-button" class="btn btn-primary">Book Appointment</button>
+
+            <!-- The Modal -->
+            <div id="booking-modal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h2>Book an Appointment</h2>
+                    <form id="appointment-form" method="post">
+                        {% csrf_token %}
+
+                        <!-- Specialization Selection -->
+                        <div class="form-group">
+                            <label for="specialization">Select Specialization:</label>
+                            <select id="specialization" name="specialization" class="form-control">
+                                <option value="">Select Specialization</option>
+                                {% for specialization in specializations %}
+                                <option value="{{ specialization }}">{{ specialization }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Doctor Selection -->
+                        <div class="form-group">
+                            <label for="doctor">Select Doctor:</label>
+                            <select id="doctor" name="doctor" class="form-control">
+                                <option value="">Select a Doctor</option>
+                            </select>
+                        </div>
+
+                        <!-- Patient Information -->
+                        <div class="form-group">
+                            <label for="patient_name">Your Name:</label>
+                            <input type="text" id="patient_name" name="patient_name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient_email">Email:</label>
+                            <input type="email" id="patient_email" name="patient_email" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient_phone">Phone:</label>
+                            <input type="tel" id="patient_phone" name="patient_phone" class="form-control" required>
+                        </div>
+
+                        <!-- Appointment Date -->
+                        <div class="form-group">
+                            <label for="appointment_date">Preferred Date:</label>
+                            <input type="date" id="appointment_date" name="appointment_date" class="form-control"
+                                required>
+                        </div>
+
+                        <!-- Appointment Time -->
+                        <div class="form-group">
+                            <label for="appointment_time">Preferred Time:</label>
+                            <input type="time" id="appointment_time" name="appointment_time" class="form-control"
+                                required>
+                        </div>
+
+                        <!-- Reason for Visit -->
+                        <div class="form-group">
+                            <label for="reason">Reason for Visit:</label>
+                            <textarea id="reason" name="reason" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Book Appointment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- The Modal -->
+        <div id="contactModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h2>Contact Us</h2>
+                <p>Please fill out the form below, and we will get back to you shortly.</p>
+                <form class="contact-form" onsubmit="return submitForm(event)">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tel">Mobile:</label>
+                        <input type="tel" id="mobile" name="mobile" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="4" required></textarea>
+                    </div>
+                    <button type="submit">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="{% static 'images_website/bg.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-content">
+            <h1>Your Health Is Our <span>Top Priority</span></h1>
+            <p>
+                Providing exceptional healthcare services with a commitment to excellence, innovation, and
+                patient-centered care.
+                Our team of expert doctors is here to help you live a healthier life.
+            </p>
+            <div class="hero-buttons">
+                <a href="{% url 'disease_prediction' %}">
+                    <button class="book-btn">Know Your Diseases</button>
+                </a>
+                <button class="learn-more">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <h2>Our Services</h2>
+        <p>Comprehensive healthcare services tailored to your needs</p>
+        <div class="services-grid">
+            <div class="service-card">
+                <img src="{% static 'images_website/SVG-4.svg' %}" alt="" srcset="">
+                <h3>Expert Doctors</h3>
+                <p>Access to specialized healthcare professionals</p>
+            </div>
+            <div class="service-card">
+                <img src="{% static 'images_website/SVG-5.svg' %}" alt="" srcset="">
+                <h3>Modern Facilities</h3>
+                <p>State-of-the-art medical equipment and facilities</p>
+            </div>
+            <div class="service-card">
+                <img src="{% static 'images_website/SVG-6.svg' %}" alt="" srcset="">
+                <h3>Emergency Care</h3>
+                <p>24/7 emergency medical services</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="find-doctor">
+        <h2>Find a Doctor</h2>
+        <p>Search our network of experienced healthcare professionals</p>
+        <div class="doctors-grid">
+            <div class="doctor-card">
+                <img src="{% static 'images_website/IMG-3.png' %}" alt="Dr. Sarah Johnson">
+                <div class="doctor-info">
+                    <h3>Dr. Sarah Johnson</h3>
+                    <p>Cardiologist</p>
+                    <button class="book-btn">Book Appointment</button>
+                </div>
+            </div>
+            <div class="doctor-card">
+                <img src="{% static 'images_website/IMG-9.png' %}" alt="Dr. Sarah Johnson">
+                <div class="doctor-info">
+                    <h3>Dr. Michael Chen</h3>
+                    <p>Neurologist</p>
+                    <button class="book-btn">Book Appointment</button>
+                </div>
+            </div>
+            <div class="doctor-card">
+                <img src="{% static 'images_website/IMG-7.png' %}" alt="Dr. Sarah Johnson">
+                <div class="doctor-info">
+                    <h3>Dr. Emily Martinez</h3>
+                    <p>Pediatrician</p>
+                    <button class="book-btn">Book Appointment</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="chat-section">
+        <div class="text-content">
+            <h1>Answers for Your <span class="highlight">Health</span> Questions</h1>
+            <p><b>Simplify your health decisions:</b> from report analysis to second opinions, we’ve got you covered.
+            </p>
+            <p><b>Your health, your way:</b> chat via text, voice, or upload reports for support.</p>
+            <p><b>24/7 personalised health guidance:</b> get instant answers, anytime, anywhere.</p>
+            <a href="{% url 'show_chat' %}">
+                <button class="chat-btn">Chat Now!</button>
+            </a>
+        </div>
+
+        <div class="chat-image">
+            <img src="{% static 'images_website/ai-chat.jpg' %}" alt="Health Chat">
+        </div>
+    </section>
+
+
+    <section class="features">
+        <h2>Specialised Features at Your Fingertips</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <a href="{% url 'show_chat' %}"></a>
+                <img src="{% static 'images_website/doc-chat.png' %}" alt="Health Q&A">
+                <h3>Health Q&A</h3>
+                <p>Get accurate, reassuring answers to your health questions—without the fear of endless online
+                    searches.</p>
+            </div>
+
+            <div class="feature-card">
+                <img src="{% static 'images_website/report_icon.png' %}" alt="Lab Report & Prescription">
+                <h3>Lab Report & Prescription</h3>
+                <p>Decode your lab results and prescriptions for actionable, easy-to-understand insights.</p>
+            </div>
+
+            <div class="feature-card">
+                <img src="{% static 'images_website/mental-health.png' %}" alt="Mental Health Support">
+                <h3>Mental Health Support</h3>
+                <p>Access resources and guidance for stress, anxiety, and overall well-being.</p>
+            </div>
+
+            <div class="feature-card">
+                <img src="{% static 'images_website/healthy-food.png' %}" alt="Nutrition & Diet">
+                <h3>Nutrition & Diet</h3>
+                <p>Receive personalized diet plans and nutrition advice tailored to your health needs.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="upload" class="upload-container">
+        <div class="upload-content">
+            <h2 class="upload-title">Upload Your Medical Report</h2>
+            <p class="upload-subtitle">
+                Our AI will analyze your medical reports and provide a simplified explanation
+                of what the results mean for your health.
+            </p>
+
+            <!-- Drag-and-Drop area -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon-container">
+                    <i class="fa fa-file-medical upload-icon"></i>
+                </div>
+                <p class="upload-text">Drag and drop your medical report here</p>
+                <p class="upload-hint">
+                    Upload your PDF report to get an easy-to-understand explanation
+                </p>
+                <div class="supported-formats">
+                    <span>Supported format:</span>
+                    <span class="format-badge">PDF</span>
+                </div>
+
+                <!-- Actual Form -->
+                <form id="uploadForm" method="POST" enctype="multipart/form-data" action="/analyze/">
+                    {% csrf_token %}
+
+                    <!-- Custom "Browse Files" button -->
+                    <button class="browse-btn" id="browseBtn" type='file'><input type="file" name="file" id="fileInput"
+                            accept=".pdf" required>Browse Files
+                    </button>
+
+                    <!-- Hide the real file input -->
+
+
+                    <!-- Submit button (if you want a manual "Upload" button) -->
+                    {% comment %} <button type="submit" class="upload-submit-btn">
+                        <input type="file" id="fileInput" accept=".pdf">Upload</button> {% endcomment %}
+                </form>
+            </div>
+
+            <!-- Additional UI elements (optional) -->
+            <div class="selected-file" id="selectedFile" style="display: none;">
+                <div class="file-info">
+                    <div class="file-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="file-details">
+                        <span class="file-name" id="fileName">report.pdf</span>
+                        <span class="file-size" id="fileSize">2.4 MB</span>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <span class="remove-file" id="removeFile">
+                        <i class="fas fa-trash-alt"></i> Remove
+                    </span>
+                </div>
+            </div>
+
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-stats">
+                    <span class="progress-text">
+                        <i class="fas fa-spinner"></i> Processing your report...
+                    </span>
+                    <span class="progress-percentage" id="progressPercentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+
+                <div class="analysis-steps">
+                    <div class="step" id="step1">
+                        <div class="step-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <span class="step-text">Upload</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <span class="step-text">Extract Text</span>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-icon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <span class="step-text">Analyze</span>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="step-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <span class="step-text">Simplify</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="btn" id="analyzeBtn" disabled>Analyze My Report</button>
+
+    </section>
+
+    <div id="reportSummary" style="display:none;">
+        <h3>Report Summary</h3>
+        <div id="summaryText"></div>
+    </div>
+
+
+
+
+
+    <section class="contact">
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-lg-6">
+
+                    <form class="Second_Opinion form contact-one__form sky-form " id="Second_Opinion"
+                        action="thankyou.php" method="post" autocomplete="off" enctype="multipart/form-data">
+                        <h7>Request you to kindly fill all the required details.</h7>
+                        <div class="row">
+                            <div class="col-md-6"> <input type="text" id="name" name="name" maxlength="255"
+                                    placeholder="Name*"></div>
+                            <div class="col-md-6"> <input type="text" id="email" name="email" maxlength="255"
+                                    placeholder="Email ID*"></div>
+
+                            <div class="col-md-6"><input type="text" name="contact_no"
+                                    onkeypress="contact_num_valid(event)" id="contact_no" minlength="10" maxlength="15"
+                                    placeholder="Contact No*">
+                            </div>
+
+                            <div class="col-md-6"><input type="text" id="city" name="City" maxlength="255"
+                                    placeholder="City*"></div>
+
+                            <div class="col-md-6">
+                                <select name="Medical Department" id="department" style="width: 100%">
+                                    <option value=""> -- Medical Department -- </option>
+
+                                    <option>General Surgery</option>
+                                    <option>Gastrosurgery </option>
+                                    <option>Neurosurgery</option>
+                                    <option>Paediatric Surgery</option>
+                                    <option>Spine Surgery </option>
+                                    <option>Cardiac Surgery </option>
+                                    <option>Bariatric Surgery</option>
+                                    <option>Kidney Transplant</option>
+                                    <option>Gastro-Medicine</option>
+                                    <option>Orthopaedic and Joints</option>
+                                    <option>Neurology</option>
+                                    <option>Cardiology</option>
+                                    <option>High Risk Pregnancy</option>
+                                    <option>Gynaecology</option>
+                                    <option>IVF </option>
+                                    <option>Urology</option>
+                                    <option>Nephrology</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6"> <input type="text" id="doctor" name="doctor" maxlength="255"
+                                    placeholder="Specifiy Doctor's name if any"></div>
+
+                            <div class="col-md-12">
+                                <div class="file-wrapper">
+
+                                    <input type="file" class="form-control" id="report" name="report">
+
+
+                                    <button><span class="file-button"> <span class="file-holder"></span> <i
+                                                class="fa fa-upload"></i> Upload recent reports*</span></button>
+                                </div>
+                                <p id="medications" style="width: 100%"></p>
+                            </div>
+                            <div class="col-md-12 text-left">
+                                <p id="error_data"></p>
+                                <div class="input-group button-holder">
+
+                                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"
+                                        class="g-recaptcha-response">
+                                    <button class="thm-btn contact-one__btn" type="submit"
+                                        name="Second_Opinion">Submit</button>
+                                    <input type="hidden" value="KD_Second_Opinion" name="type_of_form">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div><!-- /.col-lg-6 -->
+            </div><!-- /.row -->
+        </div><!-- /.container -->
+        <div class="contact-map">
+            <h2>Location</h2>
+            <iframe src="https://www.google.com/maps/embed" width="100%" height="300"
+                style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy">
+            </iframe>
+
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-about">
+                <div class="logo">
+                    {% comment %} <img src="{% static 'images_website/IMG-4.png' %}" alt="" srcset=""> {% endcomment %}
+
+                </div>
+                <p>Your trusted partner in healthcare, providing comprehensive medical services with care and
+                    compassion.</p>
+            </div>
+            <div class="footer-links">
+                <h3 class="footer_btn">Quick Links</h3>
+                <a class="footer_btn" href="#home">Home</a>
+                <a class="footer_btn" href="#articles">Health Articles</a>
+                <a class="footer_btn" href="#about">About Us</a>
+                <a href="javascript:void(0);" class="footer_btn" id="footer_contact" onclick="openModal()">Contact
+                    Us</a>
+            </div>
+            <div class="contact-info">
+                <p>
+                    <img src="{% static 'images_website/SVG-7.svg' %}" alt="Location Icon">
+                    123 Healthcare Ave, Medical City, MC 12345
+                </p>
+                <p>
+                    <img src="{% static 'images_website/SVG-2.svg' %}" alt="Phone Icon">
+                    +1 (555) 123-4567
+                </p>
+                <p>
+                    <img src="{% static 'images_website/SVG.svg' %}" alt="Email Icon">
+                    contact@healthcareplus.com
+                </p>
+            </div>
+        </div>
+
+    </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById("contactModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("contactModal").style.display = "none";
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            alert("Your message has been sent successfully!");
+            closeModal();
+            return false;
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Basic references
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            const selectedFile = document.getElementById('selectedFile');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const removeFile = document.getElementById('removeFile');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
+
+            // 2. Drag and drop events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                uploadArea.style.borderColor = '#2ecc71';
+                uploadArea.style.backgroundColor = 'rgba(46, 204, 113, 0.05)';
+                uploadArea.style.transform = 'scale(1.02)';
+            }
+
+            function unhighlight() {
+                uploadArea.style.borderColor = '#3498db';
+                uploadArea.style.backgroundColor = '';
+                uploadArea.style.transform = '';
+            }
+
+            // 3. Handle file drop
+            uploadArea.addEventListener('drop', handleDrop, false);
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+
+            // 4. Handle file selection via input
+            fileInput.addEventListener('change', function () {
+                handleFiles(this.files);
+            });
+
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    const file = files[0];
+
+                    // Check if file is PDF
+                    if (file.type === 'application/pdf') {
+                        displayFileInfo(file);
+                        analyzeBtn.disabled = false;
+                    } else {
+                        // Show error message
+                        const originalText = uploadArea.querySelector('.upload-text').textContent;
+                        uploadArea.querySelector('.upload-text').textContent = 'Please upload a PDF file';
+                        uploadArea.querySelector('.upload-text').style.color = '#e74c3c';
+                        uploadArea.style.borderColor = '#e74c3c';
+
+                        setTimeout(() => {
+                            uploadArea.querySelector('.upload-text').textContent = originalText;
+                            uploadArea.querySelector('.upload-text').style.color = '';
+                            uploadArea.style.borderColor = '';
+                        }, 3000);
+
+                        resetUpload();
+                    }
+                }
+            }
+
+            function displayFileInfo(file) {
+                fileName.textContent = file.name;
+
+                // Format file size
+                let size = file.size;
+                let formattedSize;
+                if (size < 1024) {
+                    formattedSize = size + ' bytes';
+                } else if (size < 1024 * 1024) {
+                    formattedSize = (size / 1024).toFixed(1) + ' KB';
+                } else {
+                    formattedSize = (size / (1024 * 1024)).toFixed(1) + ' MB';
+                }
+
+                fileSize.textContent = formattedSize;
+                selectedFile.style.display = 'flex';
+                uploadArea.style.display = 'none';
+            }
+
+            // 5. Remove selected file
+            removeFile.addEventListener('click', function () {
+                resetUpload();
+                uploadArea.style.display = 'flex';
+            });
+
+            function resetUpload() {
+                fileInput.value = '';
+                selectedFile.style.display = 'none';
+                progressContainer.style.display = 'none';
+                progressBar.style.width = '0%';
+                progressPercentage.textContent = '0%';
+                analyzeBtn.disabled = true;
+
+                // Reset steps
+                [step1, step2, step3, step4].forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+            }
+
+            // 6. Analyze report (on button click)
+            analyzeBtn.addEventListener('click', analyzeReport);
+            function analyzeReport() {
+                if (!fileInput.files.length) return;
+
+                // Show progress container
+                progressContainer.style.display = 'block';
+                analyzeBtn.disabled = true;
+
+                // Start simulating progress
+                step1.classList.add('active');
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 2;
+                    if (progress > 95) {
+                        clearInterval(interval);
+                    }
+                    progressBar.style.width = `${progress}%`;
+                    progressPercentage.textContent = `${progress}%`;
+
+                    // Update steps based on progress
+                    if (progress >= 25 && progress < 50) {
+                        step1.classList.remove('active');
+                        step1.classList.add('completed');
+                        step2.classList.add('active');
+                    } else if (progress >= 50 && progress < 75) {
+                        step2.classList.remove('active');
+                        step2.classList.add('completed');
+                        step3.classList.add('active');
+                    } else if (progress >= 75) {
+                        step3.classList.remove('active');
+                        step3.classList.add('completed');
+                        step4.classList.add('active');
+                    }
+                }, 100);
+
+                // Prepare file for upload
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                // Grab CSRF token from the DOM
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                // Send request to your Django view
+                fetch("{% url 'AnalyzeReport' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Complete progress bar
+                        clearInterval(interval);
+                        progressBar.style.width = '100%';
+                        progressPercentage.textContent = '100%';
+                        step4.classList.remove('active');
+                        step4.classList.add('completed');
+
+                        // Handle the response
+                        if (data.summary) {
+                            const summaryContainer = document.getElementById("reportSummary");
+                            const summaryText = document.getElementById("summaryText");
+
+                            // Convert Markdown to HTML using Marked
+                            const formattedSummary = marked.parse(data.summary);
+                            summaryText.innerHTML = formattedSummary;
+
+                            summaryContainer.style.display = 'block';
+                        } else if (data.error) {
+                            alert(`Error: ${data.error}`);
+                            resetUpload();
+                        }
+                    })
+                    .catch(error => {
+                        clearInterval(interval);
+                        alert(`Error: ${error.message}`);
+                        resetUpload();
+                    });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+    // Get references to elements
+    const bookingButton = document.getElementById('booking-button');
+    const bookingModal = document.getElementById('booking-modal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const specializationSelect = document.getElementById('specialization');
+    const doctorSelect = document.getElementById('doctor');
+    const appointmentForm = document.getElementById('appointment-form');
+    
+    // Show booking modal when clicked
+    bookingButton.addEventListener('click', function () {
+        bookingModal.style.display = 'block';
+    });
+
+    // Close booking modal
+    closeModalBtn.addEventListener('click', function () {
+        bookingModal.style.display = 'none';
+    });
+
+    // Close modal by clicking outside
+    window.onclick = function(event) {
+        if (event.target == bookingModal) {
+            bookingModal.style.display = 'none';
+        }
+    };
+
+    // Fix for the book buttons inside doctor cards
+    const doctorCardButtons = document.querySelectorAll('.doctor-card .book-btn');
+    doctorCardButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            bookingModal.style.display = 'block';
+            // You could pre-select the doctor here if needed
+        });
+    });
+
+    // Handle specialization selection change
+    specializationSelect.addEventListener('change', function() {
+        const specialization = this.value;
+        doctorSelect.innerHTML = '<option value="">Loading doctors...</option>';
+        
+        if (specialization) {
+            fetch(`/get-doctors/?specialization=${encodeURIComponent(specialization)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    doctorSelect.innerHTML = '<option value="">Select a Doctor</option>';
+                    
+                    if (data.doctors && data.doctors.length > 0) {
+                        data.doctors.forEach(doctor => {
+                            const option = document.createElement('option');
+                            option.value = doctor.id;
+                            option.textContent = doctor.name;
+                            doctorSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'No doctors available for this specialization';
+                        doctorSelect.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching doctors:', error);
+                    doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                });
+        } else {
+            doctorSelect.innerHTML = '<option value="">Select a Doctor</option>';
+        }
+    });
+
+    // Handle appointment form submission
+    if (appointmentForm) {
+        appointmentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            fetch('/book-appointment/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    bookingModal.style.display = 'none';
+                    appointmentForm.reset();
+                } else {
+                    alert(data.message || 'An error occurred. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            function showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

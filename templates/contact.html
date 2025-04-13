@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Modal Form</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f8ff; /* Light blue background */
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Contact Button */
+        .open-btn {
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .open-btn:hover {
+            background-color: #1c86ee;
+        }
+
+        /* Modal Background */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 40%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            position: relative;
+            animation: fadeIn 0.4s;
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: black;
+        }
+
+        /* Form Styling */
+        .contact-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .contact-form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+        }
+
+        /* Submit Button */
+        .contact-form button {
+            background-color: #1e90ff;
+            color: white;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .contact-form button:hover {
+            background-color: #1c86ee;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Button to Open Contact Form -->
+    <button class="open-btn" onclick="openModal()">Contact Us</button>
+
+  
+
+    <script>
+        // Function to Open Modal
+        function openModal() {
+            document.getElementById("contactModal").style.display = "block";
+        }
+
+        // Function to Close Modal
+        function closeModal() {
+            document.getElementById("contactModal").style.display = "none";
+        }
+
+        // Function to Handle Form Submission
+        function submitForm(event) {
+            event.preventDefault(); // Prevents default form submission behavior
+            alert("Your message has been sent successfully!");
+            closeModal(); // Close the modal after submission
+            return false;
+        }
+    </script>
+
+</body>
+</html>

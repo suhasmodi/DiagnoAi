@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --primary-light: #e1f0fa;
+            --secondary: #2ecc71;
+            --dark: #34495e;
+            --light: #f8f9fa;
+            --danger: #e74c3c;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --gradient-start: #3498db;
+            --gradient-end: #1abc9c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            padding: 20px 0;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 24px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            background-color: var(--white);
+            padding: 60px 0;
+            margin: 40px 0;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        
+        .feature-card {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        /* Enhanced Upload Container */
+        .upload-container {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e1f0fa 100%);
+            padding: 60px 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin: 60px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .upload-container::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 250px;
+            height: 250px;
+            background-color: rgba(46, 204, 113, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .upload-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .upload-title {
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            color: var(--dark);
+            background: -webkit-linear-gradient(var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .upload-subtitle {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Enhanced Upload Area */
+        .upload-area {
+            background: var(--white);
+            border: 2px dashed var(--primary);
+            border-radius: 16px;
+            padding: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .upload-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 2px dashed var(--secondary);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .upload-icon-container {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #f5f7fa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 25px;
+            transition: transform 0.3s;
+        }
+        
+        .upload-area:hover .upload-icon-container {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%);
+        }
+        
+        .upload-icon {
+            font-size: 3.5rem;
+            background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .upload-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .upload-hint {
+            color: #777;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .supported-formats {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .format-badge {
+            background-color: #f2f6f9;
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .browse-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 24px;
+            background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2);
+        }
+        
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        /* Enhanced Selected File */
+        .selected-file {
+            margin-top: 30px;
+            padding: 15px 25px;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .file-details {
+            text-align: left;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            color: var(--dark);
+            display: block;
+            margin-bottom: 3px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .file-size {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .remove-file {
+            color: var(--danger);
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #fef0f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .remove-file:hover {
+            background-color: #fee5e5;
+        }
+        
+        /* Enhanced Progress */
+        .progress-container {
+            margin-top: 40px;
+            display: none;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .progress-percentage {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.95rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .progress-text i {
+            color: var(--primary);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .analysis-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .analysis-steps::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            height: 3px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .step {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #f5f7fa;
+            border: 3px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            color: #aaa;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active .step-icon {
+            background-color: #e1f0fa;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .step.completed .step-icon {
+            background-color: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .step-text {
+            font-size: 0.85rem;
+            color: #888;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active .step-text,
+        .step.completed .step-text {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 14px 30px;
+            background: linear-gradient(120deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn:disabled {
+            background: linear-gradient(120deg, #cfd9de 0%, #a4b0be 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+        
+        .footer-section p {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links a {
+            display: block;
+            color: var(--light);
+            text-decoration: none;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #4a5568;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.6;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 30px 20px;
+            }
+            
+            .upload-title {
+                font-size: 1.8rem;
+            }
+            
+            .file-actions {
+                flex-direction: column;
+            }
+            
+            .analysis-steps {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            
+            .analysis-steps::before {
+                left: 30px;
+                right: auto;
+                top: 0;
+                bottom: 0;
+                width: 3px;
+                height: auto;
+            }
+            
+            .step {
+                flex-direction: row;
+                gap: 15px;
+                width: 100%;
+            }
+            
+            .step-text {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+<section id="upload" class="upload-container">
+    <div class="upload-content">
+        <h2 class="upload-title">Upload Your Medical Report</h2>
+        <p class="upload-subtitle">Our AI will analyze your medical reports and provide a simplified explanation of what the results mean for your health.</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon-container">
+                <i class="fa-solid fa-file-medical" style="color: #63E6BE;"></i>
+            </div>
+            <p class="upload-text">Drag and drop your medical report here</p>
+            <p class="upload-hint">Upload your PDF report to get an easy-to-understand explanation</p>
+            <div class="supported-formats">
+                <span>Supported format:</span>
+                <span class="format-badge">PDF</span>
+            </div>
+            <div class="browse-btn">Browse Files</div>
+            <input type="file" class="file-input" id="fileInput" accept=".pdf">
+        </div>
+        
+        <div class="selected-file" id="selectedFile">
+            <div class="file-info">
+                <div class="file-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="file-details">
+                    <span class="file-name" id="fileName">report.pdf</span>
+                    <span class="file-size" id="fileSize">2.4 MB</span>
+                </div>
+            </div>
+            <div class="file-actions">
+                <span class="remove-file" id="removeFile">
+                    <i class="fas fa-trash-alt"></i> Remove
+                </span>
+            </div>
+        </div>
+        
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-stats">
+                <span class="progress-text"><i class="fas fa-spinner"></i> Processing your report...</span>
+                <span class="progress-percentage" id="progressPercentage">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            
+            <div class="analysis-steps">
+                <div class="step" id="step1">
+                    <div class="step-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <span class="step-text">Upload</span>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <span class="step-text">Extract Text</span>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <span class="step-text">Analyze</span>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <span class="step-text">Simplify</span>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn" id="analyzeBtn" disabled>Analyze My Report</button>
+    </div>
+</section>
+
+    
+</body>
+</html>

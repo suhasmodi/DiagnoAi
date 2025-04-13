@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: #333;
+            line-height: 1.6;
+            background-color: #1665da;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* SVG Heartbeat background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(41, 84, 153, 0.9) 0%, rgba(54, 120, 189, 0.85) 100%);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1200 800' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cstyle type='text/css'%3E .heartline %7B fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; %7D %3C/style%3E%3C/defs%3E%3Cpath class='heartline' d='M0,400 Q50,400 100,400 T200,400 T300,200 T400,400 T500,400 T600,400 T700,150 T800,400 T900,400 T1000,400 T1100,400 T1200,400'/%3E%3Cpath class='heartline' d='M0,500 Q50,500 100,500 T200,500 T300,300 T400,500 T500,500 T600,500 T700,250 T800,500 T900,500 T1000,500 T1100,500 T1200,500'/%3E%3Cpath class='heartline' d='M0,300 Q50,300 100,300 T200,300 T300,100 T400,300 T500,300 T600,300 T700,50 T800,300 T900,300 T1000,300 T1100,300 T1200,300'/%3E%3C/svg%3E");
+            background-size: cover;
+            z-index: -1;
+        }
+        
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        
+        .logo::before {
+            margin-right: 8px;
+            font-size: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .contact-info {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        
+        .contact-icon {
+            margin-right: 8px;
+        }
+        
+        .book-demo-btn {
+            background-color: #ffffff;
+            color: #5664ce;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .book-demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            background-color: #f8f9fa;
+        }
+        
+        /* Main content area */
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: absolute;
+            flex: 1;
+        }
+        
+        /* Left side - Illustration area */
+        .illustration-section {
+            width: 65%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            margin-left: 100px;
+            margin-top: 80px;
+        }
+        
+        .hero-title {
+            font-size: 72px;
+            line-height: 1.2;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .sub-title{
+            font-size: 36px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        
+        .hero-description {
+            color: rgb(255, 255, 255);
+            font-size: 20px;
+            margin-bottom: 40px;
+        }
+
+        
+        
+        
+      
+        
+        /* Form container */
+        .form-container {
+            width: 55%;
+            background-color: #ffffffea;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            position: absolute;
+            max-height: 600px;
+            overflow-y: auto;
+            align-items: self-end;
+            margin-left: 850px;
+            margin-top: -50px;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-title {
+            font-size: 28px;
+            color: #5664ce;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .form-description {
+            color: #64748b;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .form-field {
+            margin-bottom: 16px;
+            width: 100%;
+        }
+        
+        .form-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4b5563;
+            font-size: 14px;
+            font-weight: bolder;
+        }
+        
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background-color: #f8fafc;
+        }
+        
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #3860d6b6;
+            box-shadow: 0 0 0 3px rgba(57, 103, 230, 0.345);
+            background-color: #ffffff;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        /* Radio buttons for gender */
+        .gender-options {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .gender-option {
+            display: flex;
+            align-items: center;
+            margin-right: 16px;
+            cursor: pointer;
+        }
+        
+        .gender-option input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            margin: 24px 0;
+            font-size: 14px;
+        }
+        
+        .checkbox-container input {
+            margin-top: 3px;
+            margin-right: 10px;
+            width: auto;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #7e9ed8 0%, #4d48df 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 16px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .required::after {
+            content: "*";
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        /*forgot link */
+        
+        /* Login link */
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .login-link a {
+            color: #5664ce;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Progress indicator */
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #94a3b8;
+            position: relative;
+            margin: 0 20px;
+        }
+        
+        .progress-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 40px;
+            width: 40px;
+            height: 2px;
+            background-color: #f1f5f9;
+        }
+        
+        .progress-step.active {
+            background-color: #e63946;
+            color: white;
+        }
+        
+        .progress-step.active:not(:last-child)::after {
+            background-color: #e63946;
+        }
+        
+        /* Healthcare icons section */
+        .healthcare-icon-section {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .healthcare-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #ffffff;
+            transition: all 0.3s;
+        }
+        
+        .healthcare-icon:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .illustration-section, .form-container {
+                width: 100%;
+                max-height: none;
+            }
+            
+            .illustration-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .header {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+            
+            .contact-info {
+                gap: 15px;
+                margin: 10px 0;
+                flex-wrap: wrap;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 2fr;
+            }
+            
+            .certifications {
+                flex-wrap: wrap;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .gender-options {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+    <header class="header">
+        <div class="logo">DiagnoAI</div>
+        <div class="contact-info">
+            <div class="contact-item">
+                <span class="contact-icon">📞</span>
+                <span>1800-571-0124</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">✉️</span>
+                <span>demo@diagnoai.com</span>
+            </div>
+        </div>
+        <button class="book-demo-btn"><a href="{% url 'signup' %}">Sign Up</a></button>
+    </header>
+    
+    <!-- Main content area with hero section and form -->
+    <div class="main-container">
+        <!-- Left side - Illustration with text -->
+        <div class="illustration-section">
+            <h1 class="hero-title">Welcome to DiagnoAI </h1>
+            <h2 class="sub-title"> Your AI-powered Health Companion!</h1>
+            <p class="hero-description">DiagnoAI is an intelligent health prediction system designed to help you understand your symptoms better. By leveraging advanced machine learning, it analyzes your inputs to predict potential diseases quickly and accurately. Along with precise predictions, DiagnoAI offers personalized recommendations for medications, diet plans, precautionary measures, and workout routines. Empower yourself with reliable health insights and take proactive steps towards better well-being—only with DiagnoAI!</p>
+            
+            
+        
+        <!-- Form container -->
+        <div class="form-container">
+            <div class="form-header">
+                <h1 class="form-title">Sign In</h1>
+            </div>
+            
+            <form id="patientRegistrationForm" method="POST">
+                {% csrf_token %} 
+                <!-- Username -->
+                <div class="form-field">
+                    <label for="username" class="required">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                
+                <!-- Password -->
+                <div class="form-field">
+                    <label for="password" class="required">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                
+                <!-- Submit button -->
+                <button type="submit" class="submit-btn">Sign In →</button>
+                
+                <!-- Login link -->
+                <div class="login-link">
+                    <p>Don't have an account? <a href="{% url 'signup' %}">signup</a></p>
+                    <!-- Display messages -->
+                    {% if messages %}
+                    {% for message in messages %}
+                        <p class="message">{{ message }}</p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+    document.getElementById('patientRegistrationForm').addEventListener('submit', function(event) {
+        
+        // Get form input values
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Send data to Django backend using Fetch API
+        fetch('/', {  // Ensure this URL matches your Django URL pattern
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCSRFToken() // Include CSRF token for security
+            },
+            body: new URLSearchParams({username, password}) // Convert data to form-encoded format
+        })
+        .then(response => response.json())  // Convert response to JSON
+        .then(data => {
+            if (data.success) {
+                alert('Login successful! Redirecting...');
+                window.location.href = data.redirect_url;  // Redirect to index/dashboard
+            } else {
+                alert(data.message);  // Show error message
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // Function to get CSRF token from the cookie
+    function getCSRFToken() {
+        const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+        return cookieValue ? cookieValue.pop() : '';
+    }
+</script>
+
+    
+</body>
+</html>

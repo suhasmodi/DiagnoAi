@@ -1,0 +1,248 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Assistant Chat</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ai_chat.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1><i class="fas fa-heartbeat"></i> Medical Assistant</h1>
+            <button id="reset-btn" title="Reset conversation">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be added here via JavaScript -->
+            {% if not messages %}
+            <div class="message system">
+                <div class="message-content">
+                    <p>Welcome to the Medical Assistant. Ask me any medical questions!</p>
+                </div>
+            </div>
+            {% else %}
+                {% for message in messages %}
+                    <div class="message {% if message.message_type == 'human' %}user{% else %}assistant{% endif %}">
+                        <div class="message-avatar">
+                            {% if message.message_type == 'human' %}
+                                <i class="fas fa-user"></i>
+                            {% else %}
+                                <i style='font-size:24px' class='fas'>&#xf544;</i>
+                            {% endif %}
+                        </div>
+                        <div class="message-content">
+                            <p>{{ message.content|linebreaksbr }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        <div class="chat-input">
+            <textarea id="user-input" placeholder="Type your medical question here..." rows="1"></textarea>
+            <button id="send-btn" title="Send message">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Processing your request...</p>
+        </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-btn');
+        const resetButton = document.getElementById('reset-btn');
+        const loadingIndicator = document.getElementById('loading');
+        
+        // Auto-resize textarea as user types
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            // Limit to 5 rows max
+            const maxHeight = 20 * 5; // Approx line height * 5
+            if (this.scrollHeight > maxHeight) {
+                this.style.height = maxHeight + 'px';
+                this.style.overflowY = 'auto';
+            } else {
+                this.style.overflowY = 'hidden';
+            }
+        });
+        
+        // Send message when button is clicked
+        sendButton.addEventListener('click', sendMessage);
+        
+        // Send message when Enter is pressed (without Shift)
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Reset conversation
+        resetButton.addEventListener('click', resetConversation);
+        
+        // Function to send user message
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            
+            // Clear input and reset height
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            
+            // Disable input while processing
+            userInput.disabled = true;
+            sendButton.disabled = true;
+            loadingIndicator.classList.remove('hidden');
+            
+            // Scroll to bottom
+            scrollToBottom();
+            
+            // Send to backend
+            fetch('/api/query/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Add AI response to chat
+                    addMessage(data.answer, 'assistant');
+                    
+                    // If fallback mode was used, show a notification
+                    if (data.fallback) {
+                        addSystemMessage('Note: Used fallback processing due to an issue with the primary system.');
+                    }
+                    
+                    // Show sources if available
+                    if (data.sources && data.sources.length > 0) {
+                        const sourcesText = 'Sources: ' + data.sources.join(' | ');
+                        addSystemMessage(sourcesText);
+                    }
+                } else {
+                    addSystemMessage('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                addSystemMessage('Error communicating with the server. Please try again.');
+            })
+            .finally(() => {
+                // Re-enable input
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                loadingIndicator.classList.add('hidden');
+                userInput.focus();
+                scrollToBottom();
+            });
+        }
+        
+        // Function to reset conversation
+        function resetConversation() {
+            if (!confirm('Are you sure you want to reset the conversation?')) {
+                return;
+            }
+            
+            // Show loading
+            loadingIndicator.classList.remove('hidden');
+            
+            fetch('/api/reset/', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Clear chat messages
+                    chatMessages.innerHTML = '';
+                    addSystemMessage('Conversation has been reset. Ask a new medical question!');
+                } else {
+                    addSystemMessage('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                addSystemMessage('Error resetting conversation. Please try again.');
+            })
+            .finally(() => {
+                loadingIndicator.classList.add('hidden');
+            });
+        }
+        
+        // Function to add a message to the chat
+        function addMessage(content, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            
+            const icon = document.createElement('i');
+            icon.className = type === 'user' ? 'fas fa-user' : 'fas fa-robot';
+            avatarDiv.appendChild(icon);
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            const paragraph = document.createElement('p');
+            paragraph.innerHTML = content.replace(/\n/g, '<br>');
+            contentDiv.appendChild(paragraph);
+            
+            messageDiv.appendChild(avatarDiv);
+            messageDiv.appendChild(contentDiv);
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // Function to add a system message
+        function addSystemMessage(content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message system';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            const paragraph = document.createElement('p');
+            paragraph.textContent = content;
+            contentDiv.appendChild(paragraph);
+            
+            messageDiv.appendChild(contentDiv);
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // Function to scroll chat to bottom
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Initial scroll to bottom (for loading existing messages)
+        scrollToBottom();
+    });
+    
+    
+        </script>
+</body>
+</html>
+
+
+

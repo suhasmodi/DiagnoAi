@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Disease Prediction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --accent: #f1f5f9;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .select-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .symptom-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--accent);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+            cursor: pointer;
+        }
+
+        .symptom-select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .symptoms-list {
+            background: var(--accent);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            min-height: 40px;
+            /* height: 30px; */
+        }
+
+        .symptoms-list h3 {
+            color: var(--secondary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .symptom-tag {
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            margin: 0.25rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: white;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 0.25rem;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .remove-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .predict-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .predict-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .predict-btn:active {
+            transform: translateY(0);
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--accent);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card h2 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        .result-card ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.result-card li {
+    padding: 8px 0;
+    margin: 4px 0;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 20px;
+}
+
+.result-card li:before {
+    content: "•";
+    color: #2563eb;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.result-card li:last-child {
+    border-bottom: none;
+}
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Disease Prediction</h1>
+    
+    <form id="predictionForm" method="post">
+        {% csrf_token %}
+        
+        <div class="select-container">
+            <select id="symptomSelect" class="symptom-select">
+                <option value="">Select symptoms (multiple allowed)</option>
+                {% for symptom in available_symptoms %}
+                    <option value="{{ symptom }}">{{ symptom|title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="symptoms-list">
+            <h3>Selected Symptoms</h3>
+            <div id="selectedSymptoms"></div>
+        </div>
+
+        <input type="hidden" name="symptoms" id="symptomsInput">
+        <button type="submit" class="predict-btn">Predict Disease</button>
+    </form>
+
+    {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if predicted_disease %}
+<div class="results-container">
+    <!-- Predicted Disease -->
+    <div class="result-card">
+        <h2>Predicted Disease</h2>
+        <p><strong>{{ predicted_disease }}</strong></p>
+    </div>
+    
+    <!-- Description -->
+    <div class="result-card">
+        <h2>Description</h2>
+        <p>{{ disease_description }}</p>
+    </div>
+    
+    <!-- Precautions -->
+    <div class="result-card">
+        <h2>Precautions</h2>
+        <ul>
+            {% for p in disease_precautions %}
+                    <li>{{ p }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Medications -->
+    <div class="result-card">
+        <h2>Medications</h2>
+        <ul>
+            {% for m in disease_medications %}
+                <li>{{ m }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Diet -->
+    <div class="result-card">
+        <h2>Diet</h2>
+        <ul>
+            {% for diet_list in disease_diet %}                
+                    <li>{{ diet_list }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Workout & Lifestyle -->
+    <div class="result-card">
+        <h2>Workout & Lifestyle</h2>
+        <ul>
+            {% for workout in disease_workout %}
+                <li>{{ workout }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Recommended Specialists -->
+    <div class="result-card">
+        <h2>Recommended Specialists</h2>
+        <ul>
+            {% for doctor in doc_dis %}
+                <li>{{ doctor }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let selectedSymptoms = [];
+    const symptomSelect = document.getElementById('symptomSelect');
+    const selectedSymptomsContainer = document.getElementById('selectedSymptoms');
+    const symptomsInput = document.getElementById('symptomsInput');
+    const form = document.getElementById('predictionForm');
+
+    // Add new symptom
+    symptomSelect.addEventListener('change', function() {
+        const symptom = this.value;
+        if (symptom && !selectedSymptoms.includes(symptom)) {
+            selectedSymptoms.push(symptom);
+            updateSymptomsDisplay();
+        }
+        this.value = '';
+    });
+
+    // Update display of selected symptoms
+    function updateSymptomsDisplay() {
+        selectedSymptomsContainer.innerHTML = '';
+        selectedSymptoms.forEach(symptom => {
+            const tag = document.createElement('span');
+            tag.className = 'symptom-tag';
+            tag.innerHTML = `
+                ${symptom}
+                <button type="button" class="remove-btn" data-symptom="${symptom}">&times;</button>
+            `;
+            selectedSymptomsContainer.appendChild(tag);
+        });
+        symptomsInput.value = selectedSymptoms.join(',');
+    }
+
+    // Remove symptom
+    selectedSymptomsContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-btn')) {
+            const symptom = e.target.dataset.symptom;
+            selectedSymptoms = selectedSymptoms.filter(s => s !== symptom);
+            updateSymptomsDisplay();
+        }
+    });
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        if (selectedSymptoms.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one symptom');
+            return false;
+        }
+    });
+});
+</script>
