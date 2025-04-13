@@ -24,13 +24,13 @@ from decouple import config, Csv
 
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='diagnoai-2fff.onrender.com', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','diagnoai-dm00.onrender.com']
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1','diagnoai-dm00.onrender.com']
 
 
 # Application definition
@@ -153,7 +153,6 @@ from decouple import config
 
 TOGETHER_API_KEY = config('TOGETHER_API_KEY')
 EMAIL_HOST_PASSWORD=config('EMAIL_HOST_PASSWORD')
-DEBUG = config('DEBUG', default=False, cast=bool)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
