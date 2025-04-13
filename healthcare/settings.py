@@ -20,10 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+7&co5+r4g-)bur%0w1km8gjqmx-@+cc0rf6jsqdbp*9bvvd#&'
+from decouple import config
+
+SECRET_KEY= config('SECRET_KEY')
+
+SECRET_KEY = SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -143,9 +147,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+from decouple import config
+
+TOGETHER_API_KEY = config('TOGETHER_API_KEY')
+EMAIL_HOST_PASSWORD=config('EMAIL_HOST_PASSWORD')
+DEBUG = config('DEBUG', default=False, cast=bool)
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-TOGETHER_API_KEY ='2ca8a972b31040a97bf1b60f94c04aef876649d0467f7b46021dd0bb56d5792c'
+TOGETHER_API_KEY =TOGETHER_API_KEY
 
 
 # Email settings
@@ -154,5 +164,5 @@ EMAIL_HOST = 'smtp.gmail.com'  # Use your email provider's SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'modisuhas06@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'vigfwnqsposveqbe'  # Replace with your app password
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD  # Replace with your app password
 DEFAULT_FROM_EMAIL = 'noreply@healthcareapp.com'

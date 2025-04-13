@@ -32,27 +32,27 @@ from healthcare_website.models import UserProfile_info
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from healthcare_website.models import UserProfile_info
-# Create your views here.
+
 
 def index(request):
-    # Get all unique specializations from the database
+    
     specializations = Doctor.objects.values_list('specialization', flat=True).distinct()
     
-    # Convert QuerySet to list to ensure it's serializable
+    
     specializations_list = list(specializations)
     
-    # Add print statement for debugging
+    
     print(f"Available specializations: {specializations_list}")
     
     context = {
         'specializations': specializations_list,
-        # Include other context variables you might have
+        
     }
     
     return render(request, 'index.html', context)
 
-# def show_ai_chat(request):
-#     return render(request,'chat.html')
+
+
 
 
 
@@ -60,11 +60,11 @@ AVAILABLE_SYMPTOMS = ['itching', 'skin_rash', 'nodal_skin_eruptions', 'continuou
 'irregular_sugar_level', 'cough', 'high_fever', 'sunken_eyes', 'breathlessness', 'sweating', 'dehydration', 'indigestion', 'headache', 'yellowish_skin', 'dark_urine', 'nausea', 'loss_of_appetite', 'pain_behind_the_eyes', 'back_pain', 'constipation', 'abdominal_pain', 'diarrhoea', 'mild_fever', 'yellow_urine', 'yellowing_of_eyes', 'acute_liver_failure', 'fluid_overload', 'swelling_of_stomach', 'swelled_lymph_nodes', 'malaise', 'blurred_and_distorted_vision', 'phlegm', 'throat_irritation', 'redness_of_eyes', 'sinus_pressure', 'runny_nose', 'congestion', 'chest_pain', 'weakness_in_limbs', 'fast_heart_rate', 'pain_during_bowel_movements', 'pain_in_anal_region', 'bloody_stool', 'irritation_in_anus', 'neck_pain', 'dizziness', 'cramps', 'bruising', 'obesity', 'swollen_legs', 'swollen_blood_vessels', 'puffy_face_and_eyes', 'enlarged_thyroid', 'brittle_nails', 'swollen_extremeties', 'excessive_hunger', 'extra_marital_contacts', 'drying_and_tingling_lips', 'slurred_speech', 'knee_pain', 'hip_joint_pain', 'muscle_weakness', 'stiff_neck', 'swelling_joints', 'movement_stiffness', 'spinning_movements', 'loss_of_balance', 'unsteadiness', 'weakness_of_one_body_side', 'loss_of_smell', 'bladder_discomfort', 'foul_smell_of urine', 'continuous_feel_of_urine', 'passage_of_gases', 'internal_itching', 'toxic_look_(typhos)', 'depression', 'irritability', 'muscle_pain', 'altered_sensorium', 'red_spots_over_body', 'belly_pain', 'abnormal_menstruation', 'dischromic _patches', 'watering_from_eyes', 'increased_appetite', 'polyuria', 'family_history', 'mucoid_sputum', 'rusty_sputum', 'lack_of_concentration', 'visual_disturbances', 'receiving_blood_transfusion', 'receiving_unsterile_injections', 'coma', 'stomach_bleeding', 'distention_of_abdomen', 'history_of_alcohol_consumption', 'fluid_overload.1', 'blood_in_sputum', 'prominent_veins_on_calf', 'palpitations', 'painful_walking', 'pus_filled_pimples', 'blackheads', 'scurring', 'skin_peeling', 'silver_like_dusting', 'small_dents_in_nails', 'inflammatory_nails', 'blister', 'red_sore_around_nose', 'yellow_crust_ooze']
 
 def disease_prediction(request):
-    # Initialize context with the available symptoms list.
+    
     context = {'available_symptoms': AVAILABLE_SYMPTOMS}
     
     if request.method == 'POST':
-        # Retrieve the symptoms string from the POST data and convert it to a list.
+        
         symptoms_string = request.POST.get('symptoms', '')
         selected_symptoms = [symptom.strip() for symptom in symptoms_string.split(',') if symptom.strip()]
         
@@ -72,11 +72,11 @@ def disease_prediction(request):
         print("Processed symptoms list:", selected_symptoms)
         
         if selected_symptoms:
-            # Predict the disease using the provided symptoms.
+            
             predicted_disease = predict_disease(selected_symptoms)
             print("Predicted disease:", predicted_disease)
             
-            # Get detailed information for the predicted disease.
+            
             (disease_description,
              disease_precautions,
              disease_medications,
@@ -84,31 +84,31 @@ def disease_prediction(request):
              disease_workout,
              doc_dis) = get_disease_information(predicted_disease)
             
-            # Update the context with all the prediction details.
+            
             context.update({
                 'selected_symptoms': selected_symptoms,
                 'predicted_disease': predicted_disease,
                 'disease_description': disease_description,
-                # Format precautions as numbered points; note precautions is a list of lists.
+                
                 'disease_precautions': [f"{i + 1}. {precaution}" for i, precaution in enumerate(disease_precautions[0])],
-                # Format medications, diet, workout, and specialists as numbered lists.
+                
                 'disease_medications': [f"{i + 1}. {medication}" for i, medication in enumerate(disease_medications)],
                 'disease_diet': [f"{i + 1}. {diet}" for i, diet in enumerate(disease_diet)],
                 'disease_workout': [f"{i + 1}. {workout}" for i, workout in enumerate(disease_workout)],
                 'doc_dis': [f"{i + 1}. {doctor}" for i, doctor in enumerate(doc_dis)],
             })
         else:
-            # No symptoms provided; return an error message.
+            
             context['error'] = 'Please select at least one symptom.'
     
-    # Render the template with the context.
+    
     return render(request, 'predict-diseases.html', context)
 
 
 
     
-# Create a singleton instance of the MedicalAssistant
-# This will be shared across requests
+
+
 medical_assistant = None
 assistant_lock = threading.Lock()
 
@@ -121,15 +121,15 @@ def get_assistant():
 
 def show_chat(request):
     """Render the main chat interface"""
-    # Generate a session ID if one doesn't exist
+    
     if 'session_id' not in request.session:
         request.session['session_id'] = str(uuid.uuid4())
     
-    # Get or create the conversation
+    
     session_id = request.session['session_id']
     conversation, created = Conversation.objects.get_or_create(session_id=session_id)
     
-    # Get previous messages for this conversation
+    
     messages = Message.objects.filter(conversation=conversation)
     
     return render(request, 'chat.html', {
@@ -145,25 +145,25 @@ def process_query(request):
             data = json.loads(request.body)
             user_input = data.get('query', '')
             
-            # Get the session ID
+            
             session_id = request.session.get('session_id', str(uuid.uuid4()))
             request.session['session_id'] = session_id
             
-            # Get or create the conversation
+            
             conversation, created = Conversation.objects.get_or_create(session_id=session_id)
             
-            # Save the user message
+            
             Message.objects.create(
                 conversation=conversation,
                 content=user_input,
                 message_type='human'
             )
             
-            # Process the query
+            
             assistant = get_assistant()
             response = assistant.process_query(user_input)
             
-            # Save the AI response
+            
             Message.objects.create(
                 conversation=conversation,
                 content=response['answer'],
@@ -189,11 +189,11 @@ def process_query(request):
 def reset_conversation(request):
     """Reset the conversation history"""
     if request.method == 'POST':
-        # Reset the assistant's conversation
+        
         assistant = get_assistant()
         assistant.reset_conversation()
         
-        # Clear the database conversation
+        
         session_id = request.session.get('session_id')
         if session_id:
             try:
@@ -208,38 +208,38 @@ def reset_conversation(request):
 
 
 
- # Make sure this import exists
+ 
 
 def AnalyzeReport(request):
     if request.method == 'POST':
         print("Request Received")
         print("FILES:", request.FILES)
 
-        # Check if 'file' exists in request.FILES
+        
         if 'file' not in request.FILES:
             return JsonResponse({"error": "No file uploaded"})
         
         file = request.FILES['file']
         print("File Name:", file.name)
 
-        # Validate file type
+        
         if not file.name.lower().endswith('.pdf'):
             return JsonResponse({"error": "Only PDF files are supported"})
 
-        # Create a safe file path in a dedicated upload directory within your media folder
+        
         upload_dir = os.path.join(settings.MEDIA_ROOT, 'temp_uploads')
         os.makedirs(upload_dir, exist_ok=True)
         unique_filename = f"{uuid.uuid4()}_{file.name}"
         file_path = os.path.join(upload_dir, unique_filename)
 
         try:
-            # Save the uploaded file to disk
+            
             with open(file_path, 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
             print(f"File saved successfully at {file_path}")
             
-            # Process the PDF using PyPDFLoader
+            
             loader = PyPDFLoader(file_path)
             doc = loader.load()
             if not doc or len(doc) == 0 or not doc[0].page_content:
@@ -248,13 +248,13 @@ def AnalyzeReport(request):
             text = doc[0].page_content
             print("Extracted Text (first 100 chars):", text[:100])
             
-            # Optionally, split the text into chunks if necessary
+            
             text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
                 encoding_name="cl100k_base", chunk_size=300, chunk_overlap=50
             )
             texts = text_splitter.split_text(text)
             
-            # Define a prompt template for generating a summary
+            
             prompt_template = """
             You are a medical report analysis assistant. Provide a summary of the medical report:
             "{text}"
@@ -265,7 +265,7 @@ def AnalyzeReport(request):
             """
             prompt = PromptTemplate.from_template(prompt_template)
             
-            # Configure the LLM model using ChatTogether
+            
             llm_model = ChatTogether(
                 together_api_key=settings.TOGETHER_API_KEY,
                 model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
@@ -273,7 +273,7 @@ def AnalyzeReport(request):
             llm_chain = LLMChain(llm=llm_model, prompt=prompt)
             stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
             
-            # Generate summary from the processed document
+            
             summary = stuff_chain.run(doc)
             print("Summary:", summary)
             return JsonResponse({"summary": summary})
@@ -283,7 +283,7 @@ def AnalyzeReport(request):
             return JsonResponse({"error": f"Error processing PDF: {str(e)}"})
 
         finally:
-            # Clean up the temporary file after processing
+            
             if os.path.exists(file_path):
                 os.remove(file_path)
                 print(f"File {unique_filename} removed successfully")
@@ -291,7 +291,7 @@ def AnalyzeReport(request):
     return JsonResponse({"error": "Invalid request method. Use POST."})
 
 
-  # Import the model
+  
 
 def signup(request):
     if request.method == "POST":
@@ -300,14 +300,14 @@ def signup(request):
         username = request.POST["username"]
         phone = request.POST["phone"]
         email = request.POST["email"]
-        birthdate = request.POST["birthdate"]  # Change `bod` to `birthdate`
+        birthdate = request.POST["birthdate"]  
         gender = request.POST["gender"]
         weight = request.POST["weight"]
         height = request.POST["height"]
         address = request.POST["address"]
         password = request.POST["password"]
 
-        # Check if user already exists
+        
         if UserProfile_info.objects.filter(username=username).exists():
             messages.error(request, "Username already exists! Please choose another.")
             return redirect("signup")
@@ -316,17 +316,17 @@ def signup(request):
             messages.error(request, "Email already registered! Please use another email.")
             return redirect("signup")
 
-        # Hash the password before saving
+        
         hashed_password = make_password(password)
 
-        # Save user to database using ORM
+        
         user = UserProfile_info.objects.create(
             firstname=firstname,
             lastname=lastname,
             username=username,
             phone=phone,
             email=email,
-            birthdate=birthdate,  # Corrected field name
+            birthdate=birthdate,  
             gender=gender,
             weight=weight,
             height=height,
@@ -339,7 +339,7 @@ def signup(request):
 
     return render(request, "signup.html")
 
-  # Import the model
+  
 
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -352,14 +352,14 @@ def signin(request):
         username = request.POST["username"]
         password = request.POST["password"]
         
-        # Direct database query without caching
+        
         user = UserProfile_info.objects.filter(username=username).first()
         if not user:
             messages.error(request, "Username does not exist. Please sign up.")
             return redirect("signin")
             
         if check_password(password, user.password):
-            # Set session
+            
             request.session['user_id'] = user.id
             request.session['username'] = user.username
             return redirect("index")
@@ -378,7 +378,7 @@ def news(request):
 from django.core.management.base import BaseCommand
 from faker import Faker
 import random
-from .models import Doctor  # Replace 'your_app' with your actual app name
+from .models import Doctor  
 
 class Command(BaseCommand):
     help = 'Creates fake Indian doctor data'
@@ -388,9 +388,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         count = kwargs['count']
-        fake = Faker('en_IN')  # Use Indian locale
+        fake = Faker('en_IN')  
         
-        # Common Indian surnames
+        
         indian_surnames = [
             'Sharma', 'Patel', 'Verma', 'Gupta', 'Singh', 'Kumar', 'Agarwal', 'Mehta',
             'Joshi', 'Shah', 'Rao', 'Reddy', 'Patil', 'Desai', 'Nair', 'Iyer', 'Iyengar',
@@ -398,7 +398,7 @@ class Command(BaseCommand):
             'Chauhan', 'Chopra', 'Dutta', 'Gill', 'Bhat', 'Pillai', 'Kaur', 'Arora'
         ]
         
-        # Medical specializations
+        
         specializations = [
             'Cardiology', 'Neurology', 'Pediatrics', 'Orthopedics', 'Gynecology',
             'Dermatology', 'Ophthalmology', 'Psychiatry', 'Oncology', 'Urology',
@@ -408,13 +408,13 @@ class Command(BaseCommand):
             'Internal Medicine', 'Ayurveda', 'Homeopathy', 'Unani Medicine'
         ]
         
-        # Degrees
+        
         degrees = ['MBBS', 'MD', 'MS', 'DNB', 'DM', 'MCh', 'BAMS', 'BHMS', 'BUMS']
 
         doctors_created = 0
         
         for _ in range(count):
-            # Generate a more Indian-sounding name
+            
             gender = random.choice(['M', 'F'])
             if gender == 'M':
                 first_name = fake.first_name_male()
@@ -423,10 +423,10 @@ class Command(BaseCommand):
                 
             last_name = random.choice(indian_surnames)
             
-            # Generate 2-3 random degrees
+            
             doctor_degrees = ', '.join(random.sample(degrees, random.randint(1, 3)))
             
-            # Create the doctor object
+            
             doctor = Doctor(
                 name=f"Dr. {first_name} {last_name}",
                 gender=gender,
@@ -486,64 +486,10 @@ def get_doctors(request):
     return JsonResponse({'doctors': []})
 
 @require_POST
-# def book_appointment(request):
-#     """Handle appointment booking and send confirmation emails"""
-    
-#     # Check if it's an AJAX request
-#     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-    
-#     try:
-#         # Get form data
-#         doctor_id = request.POST.get('doctor')
-#         patient_name = request.POST.get('patient_name')
-#         patient_email = request.POST.get('patient_email')
-#         patient_phone = request.POST.get('patient_phone')
-#         appointment_date = request.POST.get('appointment_date')
-#         appointment_time = request.POST.get('appointment_time')
-#         reason = request.POST.get('reason', '')
-        
-#         # Validate data
-#         if not all([doctor_id, patient_name, patient_email, patient_phone, appointment_date, appointment_time]):
-#             if is_ajax:
-#                 return JsonResponse({'status': 'error', 'message': 'All fields are required'}, status=400)
-#             return redirect('home')
-        
-
-        
-        
-#         # Create appointment
-#         appointment = Appointment.objects.create(
-#             doctor=doctor,
-#             patient_name=patient_name,
-#             patient_email=patient_email,
-#             patient_phone=patient_phone,
-#             appointment_date=date_obj,
-#             appointment_time=time_obj,
-#             reason=reason,
-#             status='confirmed',
-#             user=request.user if request.user.is_authenticated else None
-#         )
-        
-#         # Send confirmation emails
-#         send_confirmation_emails(appointment)
-        
-#         if is_ajax:
-#             return JsonResponse({
-#                 'status': 'success',
-#                 'message': 'Appointment booked successfully! Check your email for confirmation.'
-#             })
-        
-#         # If not AJAX, redirect to a success page
-#         return redirect('appointment_success')
-        
-#     except Exception as e:
-#         if is_ajax:
-#             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-#         return redirect('home')
 
 def book_appointment(request):
     if request.method == 'POST':
-        # Get form data
+        
         doctor_id = request.POST.get('doctor')
         patient_name = request.POST.get('patient_name')
         patient_email = request.POST.get('patient_email')
@@ -553,7 +499,7 @@ def book_appointment(request):
         reason = request.POST.get('reason')
         
         try:
-            # Create appointment
+            
             doctor = Doctor.objects.get(id=doctor_id)
             
             appointment = Appointment.objects.create(
@@ -566,7 +512,7 @@ def book_appointment(request):
                 reason=reason
             )
             
-            # Send confirmation emails
+            
             email_sent = send_confirmation_emails(appointment)
             
             return JsonResponse({
@@ -588,9 +534,9 @@ def book_appointment(request):
 def send_confirmation_emails(appointment):
     """Send confirmation emails to both patient and doctor"""
     
-    # Format date and time if they are strings
+    
     try:
-        # Try to parse the date and time strings into datetime objects
+        
         from datetime import datetime
         
         if isinstance(appointment.appointment_date, str):
@@ -605,12 +551,12 @@ def send_confirmation_emails(appointment):
         else:
             formatted_time = appointment.appointment_time.strftime('%I:%M %p')
     except Exception as e:
-        # If parsing fails, use the original strings
+        
         print(f"Error formatting date/time: {str(e)}")
         formatted_date = appointment.appointment_date
         formatted_time = appointment.appointment_time
     
-    # Common context for emails
+    
     context = {
         'appointment': appointment,
         'doctor_name': appointment.doctor.name,
@@ -620,19 +566,19 @@ def send_confirmation_emails(appointment):
         'reason': appointment.reason
     }
     
-    # Patient email
+    
     patient_subject = f'Appointment Confirmation with {appointment.doctor.name}'
     patient_html_message = render_to_string('pateint_confirmation.html', context)
     patient_plain_message = strip_tags(patient_html_message)
     
-    # Doctor email
+    
     doctor_subject = f'New Appointment with {appointment.patient_name}'
     doctor_html_message = render_to_string('doctor_notification.html', context)
     doctor_plain_message = strip_tags(doctor_html_message)
     
-    # Send emails
+    
     try:
-        # Send email to patient
+        
         send_mail(
             patient_subject,
             patient_plain_message,
@@ -642,7 +588,7 @@ def send_confirmation_emails(appointment):
             fail_silently=False
         )
         
-        # Send email to doctor if doctor email exists
+        
         if hasattr(appointment.doctor, 'email') and appointment.doctor.email:
             send_mail(
                 doctor_subject,
