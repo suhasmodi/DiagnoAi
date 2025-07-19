@@ -22,10 +22,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from healthcare_website import views  # Add this import
 
+from django.http import HttpResponse
+
+
+
+
+
 
 
 
 urlpatterns = [
+    path('', lambda request: HttpResponse("Hello from Django on Render!")),
     path('admin/', admin.site.urls),
     path("index/", index, name="index"),
     path("diseases-predict/",disease_prediction,name='disease_prediction'),
