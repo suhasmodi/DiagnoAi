@@ -36,14 +36,13 @@ unstructured
 requests
 tqdm
 joblib
-Flask  # if you're using it anywhere
 python-decouple
 whitenoise
 google-api-core
-google-auth==2.38.0
-google-cloud-vision==3.10.0
-google-pasta==0.2.0
-googleapis-common-protos==1.68.0
+google-auth
+google-cloud-vision
+google-pasta
+googleapis-common-protos
 gpt4all
 langchain-chroma
 langchain-community
