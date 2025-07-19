@@ -1,6 +1,3 @@
-Here's a clean and professional **README description** section you can include in your `README.md` file for your GitHub repo:
-
----
 
 # 🔬 DiagnoAI – AI-Powered Healthcare Assistant
 
