@@ -32,7 +32,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','diagnoai-dm00.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','diagnoai-0mup.onrender.com']
 
 
 # Application definition
