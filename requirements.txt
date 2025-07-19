@@ -12,6 +12,7 @@ matplotlib
 nltk
 spacy
 transformers
+fuzzywuzzy
 torch>=1.10,<2.1
 
 # OCR & Vision
