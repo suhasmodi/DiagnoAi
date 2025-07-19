@@ -1,5 +1,5 @@
 # Core AI/ML Libraries
-tensorflow
+tensorflow-cpu
 keras
 gast
 numpy
