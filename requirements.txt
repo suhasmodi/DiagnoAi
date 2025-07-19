@@ -1,11 +1,11 @@
 # Core AI/ML Libraries
-tensorflow==2.13.0
-keras==2.13.1
-gast==0.4.0
-numpy==1.24.4
-scipy>=1.7
-pandas>=1.3
-scikit-learn>=1.0,<1.4
+tensorflow
+keras
+gast
+numpy
+scipy
+pandas
+scikit-learn
 matplotlib
 
 # NLP
@@ -21,7 +21,7 @@ easyocr
 Pillow
 
 # Backend / Django
-Django>=4.2
+Django
 djangorestframework
 gunicorn
 psycopg2-binary  # or mysqlclient depending on your DB
