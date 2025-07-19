@@ -3,13 +3,9 @@ previews:
 
 services:
   - type: web
-    name: ai-chat-service          
+    name: ai-chat-service
     runtime: python
-    branch: main                   
-    plan: starter
+    branch: main
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn ai_chat:app
-    envVars:
-      - key: PORT
-        value: "10000"             
-    healthCheckPath: /health       
