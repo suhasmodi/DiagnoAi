@@ -19,6 +19,7 @@ torch>=1.10,<2.1
 opencv-python
 easyocr
 Pillow
+pytesseract
 
 # Backend / Django
 Django
