@@ -12,13 +12,16 @@ from tensorflow import keras
 
 logger = logging.getLogger(__name__)
 
-# Load all static data at startup
-BASE_PATH = os.path.join(settings.BASE_DIR, "healthcare_website")
-description = pd.read_csv(os.path.join(BASE_PATH, "symptom_Description.csv"))
-precautions = pd.read_csv(os.path.join(BASE_PATH, "symptom_precaution.csv"))
-medications = pd.read_csv(os.path.join(BASE_PATH, "symptom_medication.csv"))
-diets = pd.read_csv(os.path.join(BASE_PATH, "symptom_diet.csv"))
-doc_vs_dis = pd.read_csv(os.path.join(BASE_PATH, "doctors_dataset.csv"))
+
+dataset_dir = os.path.join(settings.BASE_DIR, "healthcare_website", "dataset")
+description = pd.read_csv(os.path.join(dataset_dir, "description.csv"))
+precautions = pd.read_csv(os.path.join(dataset_dir, "precautions_df.csv"))
+medications = pd.read_csv(os.path.join(dataset_dir, "medications.csv"))
+diets = pd.read_csv(os.path.join(dataset_dir, "diets.csv"))
+doc_vs_dis = pd.read_csv(os.path.join(dataset_dir, "Doctor_Versus_Disease.csv"), encoding='latin1')
+
+workout = pd.read_csv(os.path.join(dataset_dir, "workout_df.csv"))
+
 
 # Symptom list used for fuzzy matching
 symptoms = [
