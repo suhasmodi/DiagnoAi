@@ -206,6 +206,7 @@ sympy==1.13.1
 tenacity==9.0.0
 tensorboard==2.18.0
 tensorboard-data-server==0.7.2
+python-3.11.9
 tensorflow
 termcolor==2.5.0
 tesseract==0.1.3
