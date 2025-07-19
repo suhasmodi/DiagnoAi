@@ -3,9 +3,11 @@ previews:
 
 services:
   - type: web
-    name: ai-chat-service
-    runtime: python
+    name: django-ai-chat
+    env: python
     branch: main
-    plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn ai_chat:app
+    startCommand: gunicorn healthcare_website.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: healthcare.settings
