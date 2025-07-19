@@ -37,3 +37,4 @@ tqdm
 joblib
 Flask  # if you're using it anywhere
 python-decouple
+whitenoise
